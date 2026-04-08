@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Mom</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400&family=Dancing+Script:wght@500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #ff4d6d;
+            --soft-pink: #ffb3c1;
+        }
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background: #000; overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
+            font-family: 'Inter', sans-serif;
+        }
+
+        #universe {
+            position: fixed; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, #0d1117 0%, #000 100%);
+            z-index: 1;
+        }
+
+        /* The Main Container */
+        #card {
+            display: none;
+            width: 85%;
+            max-width: 650px;
+            height: 70vh;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            text-align: center;
+            z-index: 10;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+            overflow-y: auto; /* Allows scrolling if message is long on small screens */
+            scrollbar-width: none; /* Hide scrollbar for Firefox */
+        }
+
+        #card::-webkit-scrollbar { display: none; } /* Hide scrollbar for Chrome/Safari */
+
+        #title {
+            color: var(--accent);
+            font-family: 'Dancing Script', cursive;
+            font-size: 3rem;
+            margin-bottom: 30px;
+            opacity: 0;
+            animation: fadeIn 3s forwards;
+        }
+
+        #messageContent {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            line-height: 2;
+            font-weight: 300;
+            text-align: center;
+            white-space: pre-wrap; /* Preserves your paragraph breaks */
+        }
+
+        #celebrateBtn {
+            z-index: 20;
+            background: transparent;
+            color: white;
+            border: 1px solid rgba(255,255,255,0.4);
+            padding: 18px 50px;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.6s ease;
+            border-radius: 100px;
+            font-size: 0.9rem;
+        }
+
+        #celebrateBtn:hover {
+            background: white;
+            color: black;
+            box-shadow: 0 0 40px rgba(255,255,255,0.3);
+        }
+
+        .heart-svg {
+            position: absolute;
+            bottom: -60px;
+            z-index: 5;
+            animation: elegantFloat linear forwards;
+        }
+
+        @keyframes elegantFloat {
+            0% { transform: translateY(0) scale(0.4) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.7; }
+            100% { transform: translateY(-115vh) scale(1.4) rotate(35deg); opacity: 0; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+<div id="universe"></div>
+<button id="celebrateBtn">Open Your Gift</button>
+
+<div id="card">
+    <h1 id="title">Happy Birthday, Mom!</h1>
+    <div id="messageContent"></div>
+</div>
+
+<script>
+    const universe = document.getElementById('universe');
+    const btn = document.getElementById('celebrateBtn');
+    const card = document.getElementById('card');
+    const msgContainer = document.getElementById('messageContent');
+
+    const longMessage = `Happy, happy birthday, Mom! 🎉
+
+We are so lucky and incredibly proud to have you as our mother. Words will never be enough to express how thankful we are for everything you have done for us. From the very beginning, you have given us nothing but unconditional love, care, and support. You have always been our source of strength, comfort, and guidance in every step of our lives.
+
+Thank you for all your efforts, for every sacrifice you made, and for all the struggles you faced just to make sure we are okay. We know that life was not always easy, but you never gave up. You continued to fight for us, to provide for us, and to give us a better future. Your hard work, patience, and selflessness inspire us every single day.
+
+We may not always say it, but please know that we truly appreciate everything — even the little things you do that often go unnoticed. You have shaped us into who we are today, and we will forever be grateful for that.
+
+On your special day, we wish you happiness, good health, and all the love that you deserve. May all your dreams and wishes come true, just as you have made ours possible.
+
+We love you so much, Mom. Happy birthday again! ❤️`;
+
+    // Initialize stars
+    for (let i = 0; i < 150; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        const size = Math.random() * 2.5;
+        star.style.width = size + 'px';
+        star.style.height = size + 'px';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.left = Math.random() * 100 + '%';
+        star.dataset.speed = size; 
+        universe.appendChild(star);
+    }
+
+    // Interactive Galaxy Movement
+    document.addEventListener('mousemove', (e) => {
+        const stars = document.querySelectorAll('.star');
+        stars.forEach(star => {
+            const speed = star.dataset.speed;
+            const x = (window.innerWidth - e.pageX * speed) / 80;
+            const y = (window.innerHeight - e.pageY * speed) / 80;
+            star.style.transform = `translateX(${x}px) translateY(${y}px)`;
+        });
+    });
+
+    btn.addEventListener('click', () => {
+        btn.style.opacity = '0';
+        setTimeout(() => {
+            btn.style.display = 'none';
+            card.style.display = 'block';
+            typeWriter(longMessage, 0);
+            setInterval(createHeart, 300);
+        }, 600);
+    });
+
+    // Typewriter effect to make reading it an experience
+    function typeWriter(text, i) {
+        if (i < text.length) {
+            msgContainer.innerHTML += text.charAt(i);
+            // Auto-scroll as it types so she doesn't have to
+            card.scrollTop = card.scrollHeight;
+            setTimeout(() => typeWriter(text, i + 1), 35);
+        }
+    }
+
+    function createHeart() {
+        const heart = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        heart.setAttribute("viewBox", "0 0 32 32");
+        heart.classList.add("heart-svg");
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", "M16 28.5L14.1 26.7C7.33 20.58 3 16.5 3 11.5 3 7.42 6.42 4 10.5 4c2.31 0 4.52 1.08 6 2.79 1.48-1.71 3.69-2.79 6-2.79 4.08 0 7.5 3.42 7.5 7.5 0 5-4.33 9.08-11.1 15.2L16 28.5z");
+        heart.appendChild(path);
+        
+        const size = Math.random() * 20 + 10;
+        heart.style.width = size + 'px';
+        heart.style.left = Math.random() * 100 + 'vw';
+        const duration = Math.random() * 5 + 6;
+        heart.style.animationDuration = duration + 's';
+        
+        const colors = ['#ff4d6d', '#ff85a1', '#7000ff', '#f9dcc4'];
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        heart.style.fill = color;
+        heart.style.filter = `blur(1px) drop-shadow(0 0 10px ${color})`;
+
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), duration * 1000);
+    }
+</script>
+</body>
+</html>
